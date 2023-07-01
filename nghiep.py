@@ -2,10 +2,10 @@ import sqlite3
 from getpass import getpass
 
 # Kết nối đến cơ sở dữ liệu SQLite
-conn = sqlite3.connect('app.db')
+conn = sqlite3.connect('m.db')
 cursor = conn.cursor()
 
-# Tạo bảng user để lưu thông tin người dùng
+# Tạo bảng user để lưu thông tin client
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -14,18 +14,18 @@ cursor.execute('''
     )
 ''')
 
-# Tạo bảng product để lưu thông tin sản phẩm
+# Tạo bảng lưu point
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS product (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        price REAL NOT NULL,
+        sb TEXT NOT NULL,
+        diem REAL NOT NULL,
         user_id INTEGER,
         FOREIGN KEY (user_id) REFERENCES user(id)
     )
 ''')
 
-# Đăng ký người dùng
+# Đăng ký 
 def register():
     username = input("Username: ")
     password = getpass("Password: ")
@@ -43,72 +43,73 @@ def login():
     user = cursor.fetchone()
     if user:
         print("Đăng nhập thành công!")
-        menu(user[0])  # Chuyển đến menu với id của người dùng
+        menu(user[0]) 
     else:
         print("Thông tin đăng nhập không chính xác!")
 
-# Thêm sản phẩm
-def add_product(user_id):
-    name = input("Tên sản phẩm: ")
-    price = float(input("Giá tiền: "))
+# Nhập điểm
+def subject(user_id):
+    sb = input("Môn học: ")
+    n = int(input("Nhập số cột điểm TX: "))
+    points = []
+    for i in range(n):
+        point = float(input(f"Nhập điểm TX{i+1}: "))
+        scores.append(score)
+    point1 = float(input("Nhập điểm giữa kỳ: "))
+    point2 = float(input("Nhập điểm cuối kỳ: "))
+    TB = (sum(point) + 2 * point1 + 3 * point2) / (n + 5)
+    print("Tổng điểm:", TB)
     # Thêm thông tin sản phẩm vào cơ sở dữ liệu
-    cursor.execute("INSERT INTO product (name, price, user_id) VALUES (?, ?, ?)", (name, price, user_id))
+    cursor.execute("INSERT INTO product (sb, diem, user_id) VALUES (?, ?, ?)", (sb, TB, user_id))
     conn.commit()
-    print("Thêm sản phẩm thành công!")
+    print("Nhập điểm thành công!")
 
-# Xóa sản phẩm
-def delete_product(user_id):
-    product_id = int(input("ID sản phẩm cần xóa: "))
-    # Xóa thông tin sản phẩm từ cơ sở dữ liệu
-    cursor.execute("DELETE FROM product WHERE id = ? AND user_id = ?", (product_id, user_id))
-    conn.commit()
-    print("Xóa sản phẩm thành công!")
 
-# Hiển thị danh sách sản phẩm
-def display_products(user_id):
-    # Lấy thông tin sản phẩm từ cơ sở dữ liệu
+# Hiển thị
+def display(user_id):
+    # Lấy thông tin từ cơ sở dữ liệu
     cursor.execute("SELECT * FROM product WHERE user_id = ?", (user_id,))
-    products = cursor.fetchall()
-    if products:
-        for product in products:
-            print("ID:", product[0])
-            print("Tên sản phẩm:", product[1])
-            print("Giá tiền:", product[2])
-            print("------------")
+    displays = cursor.fetchall()
+    if displays:
+        for display in displays:
+            print("ID:", display[0])
+            print("Môn học:", display[1])
+            print("Điểm:", display[2])
     else:
-        print("Không có sản phẩm nào!")
+        print("Không có gì cả!")
 
-# Menu chức năng
+# chức năng
 def menu(user_id):
     while True:
-        print("""
-        ---- MENU ----
-        1. Thêm sản phẩm
-        2. Xóa sản phẩm
-        3. Hiển thị sản phẩm
-        4. Đăng xuất
-        """)
-        choice = input("Vui lòng chọn: ")
-        if choice == "1":
-            add_product(user_id)
-        elif choice == "2":
-            delete_product(user_id)
-        elif choice == "3":
-            display_products(user_id)
-        elif choice == "4":
+      # Phần khung
+       print( '- {:-<6} - {:-^20}-'.format('', ''))
+       print( '| {:<6} | {:^20} |'.format('ID', 'Chức năng'))
+       print( '| {:<6} | {:^20} |'.format('1', 'Nhập điểm học kỳ 1'))
+       print('| {:<6} | {:^20} |'.format('2', 'Hiển thị tất cả điểm'))
+       print('| {:<6} | {:^20} |'.format('3', 'Đăng xuất'))
+       print('- {:-<6} + {:-^20}-'.format('', ''))
+       choice = input("Vui lòng chọn ID: ")
+       if choice == "1":
+            subject(user_id)
+       elif choice == "2":
+            display(user_id)
+       elif choice == "3":
             break
-        else:
-            print("Lựa chọn không hợp lệ!")
+       else:
+            print("Vui lòng chọn lại!")
 
 # Chương trình chính
 while True:
-    print("""
-    ----- ỨNG DỤNG QUẢN LÝ SẢN PHẨM -----
-    1. Đăng ký
-    2. Đăng nhập
-    3. Thoát
-    """)
-    option = input("Vui lòng chọn: ")
+  # phần khung
+    print( '- {:-<6} - {:-^15}-'.format('', ''))
+    print( '| {:<6} | {:^15} |'.format('ID', 'Chức năng'))
+    print( '| {:<6} | {:^15} |'.format('1', 'Đăng ký'))
+    print('| {:<6} | {:^15} |'.format('2', 'Đăng nhập'))
+    print('| {:<6} | {:^15} |'.format('3', 'Thoát'))
+    print('- {:-<6} + {:-^15}-'.format('', ''))
+
+
+    option = input("Vui lòng chọn ID: ")
     if option == "1":
         register()
     elif option == "2":
@@ -116,7 +117,7 @@ while True:
     elif option == "3":
         break
     else:
-        print("Lựa chọn không hợp lệ!")
+        print("Vui lòng chọn lại!")
 
 # Đóng kết nối cơ sở dữ liệu
 conn.close()
