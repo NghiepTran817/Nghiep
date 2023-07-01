@@ -52,14 +52,14 @@ def subject(user_id):
     sb = input("Môn học: ")
     n = int(input("Nhập số cột điểm TX: "))
     points = []
-    for i in range(n):
-        point = float(input(f"Nhập điểm TX{i+1}: "))
-        scores.append(score)
+    for i in range(1,n+1):
+        point = float(input(f"Nhập điểm TX{i}: "))
+        points.append(point)
     point1 = float(input("Nhập điểm giữa kỳ: "))
     point2 = float(input("Nhập điểm cuối kỳ: "))
-    TB = (sum(point) + 2 * point1 + 3 * point2) / (n + 5)
-    print("Tổng điểm:", TB)
-    # Thêm thông tin vào cơ sở dữ liệu
+    TB = (sum(points) + 2 * point1 + 3 * point2) / (n + 5)
+    print(f"Tổng điểm: {TB}")
+    # Thêm thông tin sản phẩm vào cơ sở dữ liệu
     cursor.execute("INSERT INTO product (sb, diem, user_id) VALUES (?, ?, ?)", (sb, TB, user_id))
     conn.commit()
     print("Nhập điểm thành công!")
@@ -78,6 +78,23 @@ def display(user_id):
     else:
         print("Không có gì cả!")
 
+#Quên mật khẩu
+def forgetpassword():
+    username = input("Username: ") 
+    cursor.execute("SELECT password FROM user WHERE      username = ?", (username,)) 
+    password = cursor.fetchone() 
+    if password: 
+        print(f"Mật khẩu của bạn là: {password[0]}") 
+    else: 
+        print("Username không tồn tại!") 
+
+# xoá id, môn, điểm
+def deleteall(user_id):
+  cursor.execute("DELETE FROM product WHERE user_id = ?", (user_id,)) 
+  conn.commit()
+  print("Đã xoá tất cả")
+
+
 # chức năng
 def menu(user_id):
     while True:
@@ -86,7 +103,8 @@ def menu(user_id):
        print( '| {:<6} | {:^20} |'.format('ID', 'Chức năng'))
        print( '| {:<6} | {:^20} |'.format('1', 'Nhập điểm học kỳ 1'))
        print('| {:<6} | {:^20} |'.format('2', 'Hiển thị tất cả điểm'))
-       print('| {:<6} | {:^20} |'.format('3', 'Đăng xuất'))
+       print('| {:<6} | {:^20} |'.format('3', 'Xoá tất cả'))
+       print('| {:<6} | {:^20} |'.format('4', 'Đăng xuất'))
        print('- {:-<6} + {:-^20}-'.format('', ''))
        choice = input("Vui lòng chọn ID: ")
        if choice == "1":
@@ -94,6 +112,8 @@ def menu(user_id):
        elif choice == "2":
             display(user_id)
        elif choice == "3":
+            deleteall(user_id)
+       elif choice == "4":
             break
        else:
             print("Vui lòng chọn lại!")
@@ -105,7 +125,8 @@ while True:
     print( '| {:<6} | {:^15} |'.format('ID', 'Chức năng'))
     print( '| {:<6} | {:^15} |'.format('1', 'Đăng ký'))
     print('| {:<6} | {:^15} |'.format('2', 'Đăng nhập'))
-    print('| {:<6} | {:^15} |'.format('3', 'Thoát'))
+    print('| {:<6} | {:^15} |'.format('3', 'Quên mật khẩu'))
+    print('| {:<6} | {:^15} |'.format('4', 'Thoát'))
     print('- {:-<6} + {:-^15}-'.format('', ''))
 
 
@@ -114,8 +135,10 @@ while True:
         register()
     elif option == "2":
         login()
-    elif option == "3":
-        break
+    elif option == "3": 
+        forgetpassword()
+    elif option == "4": 
+       break 
     else:
         print("Vui lòng chọn lại!")
 
