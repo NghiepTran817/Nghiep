@@ -91,8 +91,9 @@ def forgetpassword():
 # xoá id, môn, điểm
 def deleteall(user_id):
   cursor.execute("DELETE FROM product WHERE user_id = ?", (user_id,)) 
-  conn.commit()
   print("Đã xoá tất cả")
+  conn.commit()
+  
 
 
 # chức năng
