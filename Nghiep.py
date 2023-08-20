@@ -59,7 +59,7 @@ def subject(user_id):
     point2 = float(input("Nhập điểm cuối kỳ: "))
     TB = (sum(points) + 2 * point1 + 3 * point2) / (n + 5)
     print(f"Tổng điểm: {TB}")
-    # Thêm thông tin sản phẩm vào cơ sở dữ liệu
+    # Thêm thông tin vào cơ sở dữ liệu
     cursor.execute("INSERT INTO product (sb, diem, user_id) VALUES (?, ?, ?)", (sb, TB, user_id))
     conn.commit()
     print("Nhập điểm thành công!")
